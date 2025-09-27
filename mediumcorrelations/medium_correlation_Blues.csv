@@ -1,0 +1,9 @@
+Feature 1,Feature 2,Correlation
+Duration,Year,0.38366806115004026
+Loudness,Year,0.4186478601575031
+Acousticness,Duration,-0.37003348261479024
+Acousticness,Loudness,-0.3677844621837261
+Liveness,Energy,0.32877815369314484
+Valence,Danceability,0.31051621270542495
+Valence,Energy,0.3820462338145407
+Tempo,Danceability,-0.31698616759230397

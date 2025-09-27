@@ -1,0 +1,9 @@
+Feature 1,Feature 2,Correlation
+Danceability,Year,-0.45971503663431657
+Loudness,Danceability,-0.40721068422339984
+Acousticness,Year,-0.4547148869493781
+Acousticness,Energy,-0.4626302398674777
+Acousticness,Loudness,-0.31399729379128094
+Valence,Danceability,0.4340527759177429
+Valence,Speechiness,-0.3084567125002333
+Tempo,Danceability,-0.3680993495047827
