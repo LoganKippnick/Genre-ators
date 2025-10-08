@@ -1,0 +1,10 @@
+Feature 1,Feature 2,Correlation
+Duration,Year,0.49047974184454535
+Acousticness,Duration,-0.39479464523834523
+Acousticness,Danceability,-0.4023685858389993
+Acousticness,Energy,-0.4800549966758803
+Valence,Time_Signature,0.305294140351357
+Valence,Danceability,0.49521820043258796
+Valence,Energy,0.44938943899508565
+Popularity,Year,0.48236139623440893
+Popularity,Acousticness,-0.3284420080287307
