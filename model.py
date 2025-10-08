@@ -1,41 +1,33 @@
 import pandas as pd
 import numpy as np
 from sklearn.impute import SimpleImputer
-from sklearn.metrics import accuracy_score
-from sklearn.calibration import LabelEncoder
-from sklearn.discriminant_analysis import StandardScaler
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report
-from sklearn.model_selection import GridSearchCV, RandomizedSearchCV, train_test_split
 from sklearn.neural_network import MLPClassifier
+from sklearn.model_selection import RandomizedSearchCV, train_test_split
 from sklearn.pipeline import Pipeline
-from sklearn.tree import DecisionTreeClassifier
 
-## Importing the dataset
-data = pd.read_csv('ClassicHit.csv')
-data = data.dropna()
-
-## Dropping irrelevant columns/rows
+# Load and clean dataset
+data = pd.read_csv('ClassicHit.csv').dropna()
 data = data.drop(columns=['Artist'])
-data = data[~data.isin(['World', 'Today', 'Disco', 'Folk', 'Reggae', 'Funk', 'SKA', 'Gospel']).any(axis=1)]
-# data = data[~data.isin(['World', 'Today', 'Disco', 'Folk', 'Reggae', 'Funk', 'SKA', 'Gospel', 'Rock', 'R&B', 'Punk', 'Metal', 'EDM', 'Country', 'Blues', 'Alt. Rock']).any(axis=1)]
+irrelevant_genres = ['World', 'Today', 'Disco', 'Folk', 'Reggae', 'Funk', 'SKA', 'Gospel']
+data = data[~data.isin(irrelevant_genres).any(axis=1)]
 
-## Get the K-fold training, test, and validation sets
+# Split data
 train, test = train_test_split(data, test_size=0.2, random_state=42)
 train, val = train_test_split(train, test_size=0.25, random_state=42)
-
-## Save the datasets to CSV files
 train.to_csv('train.csv', index=False)
 val.to_csv('val.csv', index=False)
 test.to_csv('test.csv', index=False)
 
+# Feature engineering
 x = data.drop(columns=['Genre', 'Year', 'Track', 'Time_Signature', 'Valence'])
-x = x.apply(lambda x: np.log1p(x) if np.issubdtype(x.dtype, np.number) else x)
+x = x.apply(lambda col: np.log1p(col) if np.issubdtype(col.dtype, np.number) else col)
 y = data['Genre']
-
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
 
+# Model configs
 models = {
     "Random Forest": (
         RandomForestClassifier(class_weight='balanced', random_state=42),
@@ -48,7 +40,6 @@ models = {
             "clf__bootstrap": [True]
         }
     ),
-
     "Neural Network (MLP)": (
         MLPClassifier(max_iter=2000, random_state=42),
         {
@@ -70,8 +61,7 @@ for name, (clf, param_grid) in models.items():
         ("scaler", StandardScaler()),
         ("clf", clf)
     ])
-
-    random_search = RandomizedSearchCV(
+    search = RandomizedSearchCV(
         pipeline,
         param_distributions=param_grid,
         n_iter=1,
@@ -82,17 +72,13 @@ for name, (clf, param_grid) in models.items():
         random_state=42,
         return_train_score=True
     )
-    
-    random_search.fit(X_train, y_train)
-    
-    best_model = random_search.best_estimator_
+    search.fit(X_train, y_train)
+    best_model = search.best_estimator_
     y_pred = best_model.predict(X_test)
-    
     acc = accuracy_score(y_test, y_pred)
-    print(f"\nBest parameters for {name}: {random_search.best_params_}")
+    print(f"\nBest parameters for {name}: {search.best_params_}")
     print(f"Accuracy for {name}: {acc:.4f}")
     print(f"Classification Report for {name}:\n{classification_report(y_test, y_pred)}")
-    
     results[name] = acc
 
 print("\n=== Summary of Results ===")
