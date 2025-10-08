@@ -109,11 +109,6 @@ def song_data_array(data_json):
     popularity = data_json['popularity']
     return np.array([duration, danceability, energy, key, loudness, mode, speechiness, acousticness, instrumentalness, liveness, tempo, popularity])
 
-def get_song_data(song_name, artist, access_token):
-    track_id = get_track_id(song_name, artist, access_token)
+def get_song_data(song_name, artist):
+    track_id = get_track_id(song_name, artist, get_access_token(CLIENT_ID, CLIENT_SECRET))
     return song_data_array(requests.get(f'https://track-analysis.p.rapidapi.com/pktx/spotify/{track_id}/', headers=RAPIDAPI_HEADERS).json())
-
-access_token = get_access_token(CLIENT_ID, CLIENT_SECRET)
-
-song_data = get_song_data("Bohemian Rhapsody", "Queen", access_token)
-print(song_data)
