@@ -40,6 +40,7 @@ models = {
             "clf__bootstrap": [True]
         }
     ),
+    
     "Neural Network (MLP)": (
         MLPClassifier(max_iter=2000, random_state=42),
         {
@@ -61,6 +62,7 @@ for name, (clf, param_grid) in models.items():
         ("scaler", StandardScaler()),
         ("clf", clf)
     ])
+
     search = RandomizedSearchCV(
         pipeline,
         param_distributions=param_grid,
@@ -72,9 +74,11 @@ for name, (clf, param_grid) in models.items():
         random_state=42,
         return_train_score=True
     )
+
     search.fit(X_train, y_train)
     best_model = search.best_estimator_
     y_pred = best_model.predict(X_test)
+
     acc = accuracy_score(y_test, y_pred)
     print(f"\nBest parameters for {name}: {search.best_params_}")
     print(f"Accuracy for {name}: {acc:.4f}")
