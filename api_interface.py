@@ -1,6 +1,7 @@
 from unittest import case
 
 import numpy as np
+import pandas as pd
 import spotipy
 import requests
 import base64
@@ -95,18 +96,21 @@ def mode_to_num(mode):
             return None
 
 def song_data_array(data_json):
-    duration = duration_to_ms(data_json['duration'])
-    danceability = data_json['danceability'] * 0.01
-    energy = data_json['energy'] * 0.01
-    key = note_to_num(data_json['key'])
-    loudness = int(data_json['loudness'][:-3])
-    mode = mode_to_num(data_json['mode'])
-    speechiness = data_json['speechiness'] * 0.01
-    acousticness = data_json['acousticness'] * 0.01
-    instrumentalness = data_json['instrumentalness'] * 0.01
-    liveness = data_json['liveness'] * 0.01
-    tempo = data_json['tempo']
-    popularity = data_json['popularity']
+    return pd.DataFrame([{
+        'Duration': duration_to_ms(data_json['duration']),
+        'Danceability': data_json['danceability'] * 0.01,
+        'Energy': data_json['energy'] * 0.01,
+        'Key': note_to_num(data_json['key']),
+        'Loudness': int(data_json['loudness'][:-3]),
+        'Mode': mode_to_num(data_json['mode']),
+        'Speechiness': data_json['speechiness'] * 0.01,
+        'Acousticness': data_json['acousticness'] * 0.01,
+        'Instrumentalness': data_json['instrumentalness'] * 0.01,
+        'Liveness': data_json['liveness'] * 0.01,
+        'Tempo': data_json['tempo'],
+        'Popularity': data_json['popularity']
+    }])
+
     return np.array([duration, danceability, energy, key, loudness, mode, speechiness, acousticness, instrumentalness, liveness, tempo, popularity])
 
 def get_song_data(song_name, artist):

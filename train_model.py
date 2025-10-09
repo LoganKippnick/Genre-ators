@@ -1,3 +1,4 @@
+import pickle
 import pandas as pd
 import numpy as np
 from sklearn.impute import SimpleImputer
@@ -41,16 +42,16 @@ models = {
         }
     ),
     
-    "Neural Network (MLP)": (
-        MLPClassifier(max_iter=2000, random_state=42),
-        {
-            "clf__hidden_layer_sizes": [(50,)],
-            "clf__activation": ["relu"],
-            "clf__solver": ["adam"],
-            "clf__alpha": [0.0001],
-            "clf__learning_rate": ["constant"]
-        }
-    )
+    # "Neural Network (MLP)": (
+    #     MLPClassifier(max_iter=2000, random_state=42),
+    #     {
+    #         "clf__hidden_layer_sizes": [(50,)],
+    #         "clf__activation": ["relu"],
+    #         "clf__solver": ["adam"],
+    #         "clf__alpha": [0.0001],
+    #         "clf__learning_rate": ["constant"]
+    #     }
+    # )
 }
 
 results = {}
@@ -84,6 +85,8 @@ for name, (clf, param_grid) in models.items():
     print(f"Accuracy for {name}: {acc:.4f}")
     print(f"Classification Report for {name}:\n{classification_report(y_test, y_pred)}")
     results[name] = acc
+
+    pickle.dump(best_model, open(f"{name}.sav", "wb"))
 
 print("\n=== Summary of Results ===")
 for name, acc in results.items():
